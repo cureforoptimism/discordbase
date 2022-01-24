@@ -105,7 +105,7 @@ public class HeehawCommand implements DiscordCommand {
     String suffix =
         suffixes.stream().skip(new Random().nextInt(suffixes.size())).findFirst().orElse("");
 
-    event.reply("<:donketwerk:935224181396754442> **"
+    event.reply("<:donketwerk:935256234372792361> **"
         + NumberFormat.getIntegerInstance()
         .format(heehawRepository.findFirstByOrderByIdDesc().getId())
         + " Heehaws**, and counting! "
