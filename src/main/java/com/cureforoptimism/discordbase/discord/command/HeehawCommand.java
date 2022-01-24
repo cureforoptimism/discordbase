@@ -63,7 +63,7 @@ public class HeehawCommand implements DiscordCommand {
         .flatMap(
             c ->
                 c.createMessage(
-                    "<:donketwerk:935224181396754442> **"
+                    "<a:donketwerk:934113221315551352> **"
                         + NumberFormat.getIntegerInstance()
                             .format(heehawRepository.findFirstByOrderByIdDesc().getId())
                         + " Heehaws**, and counting! "
@@ -105,7 +105,7 @@ public class HeehawCommand implements DiscordCommand {
     String suffix =
         suffixes.stream().skip(new Random().nextInt(suffixes.size())).findFirst().orElse("");
 
-    event.reply("<:donketwerk:935256234372792361> **"
+    event.reply("<a:donketwerk:934113221315551352> **"
         + NumberFormat.getIntegerInstance()
         .format(heehawRepository.findFirstByOrderByIdDesc().getId())
         + " Heehaws**, and counting! "
