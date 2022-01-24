@@ -35,10 +35,15 @@ public class DiscordCommandListener {
   public void handle(MessageCreateEvent event) {
     try {
       String message = event.getMessage().getContent().toLowerCase();
+      if (message.toLowerCase().startsWith("heehaw")) {
+        message = "!heehaw";
+      } else if (!message.startsWith("!")) {
+        return;
+      }
 
       // Trim leading !
       String[] parts = message.split(" ");
-      if (parts.length > 0) {
+      if (parts.length > 0 && !parts[0].isEmpty()) {
         String commandName = parts[0].substring(1);
 
         Flux.fromIterable(commands)

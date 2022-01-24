@@ -6,9 +6,11 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3307}/discordbot?createDatabaseIfNotExist=true
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3307}/donkeybot?createDatabaseIfNotExist=true
     username: root
     password: password
+
+discord-enabled: true
 
 tokens:
   file: ${TOKEN_LOCATION:tokens.properties}
