@@ -1,5 +1,6 @@
 package com.cureforoptimism.discordbase.discord.command;
 
+import com.cureforoptimism.discordbase.Constants;
 import com.cureforoptimism.discordbase.domain.Heehaw;
 import com.cureforoptimism.discordbase.repository.HeehawRepository;
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
@@ -40,7 +41,7 @@ public class HeehawCommand implements DiscordCommand {
 
   @Override
   public Mono<Message> handle(MessageCreateEvent event) {
-    if(!canHeeHaw(event.getMessage().getUserData().id().asLong())) {
+    if (!canHeeHaw(event.getMessage().getUserData().id().asLong())) {
       return Mono.empty();
     }
 
@@ -78,9 +79,9 @@ public class HeehawCommand implements DiscordCommand {
 
       return previousHeehawDate == null
           || !previousHeehaw
-          .get()
-          .getCreatedAt()
-          .after(new Date(System.currentTimeMillis() - 30000L));
+              .get()
+              .getCreatedAt()
+              .after(new Date(System.currentTimeMillis() - 30000L));
     }
 
     return true;
@@ -88,7 +89,7 @@ public class HeehawCommand implements DiscordCommand {
 
   @Override
   public Mono<Void> handle(ChatInputInteractionEvent event) {
-    if(!canHeeHaw(event.getInteraction().getUser().getId().asLong())) {
+    if (!canHeeHaw(event.getInteraction().getUser().getId().asLong())) {
       return Mono.empty();
     }
 
@@ -105,11 +106,15 @@ public class HeehawCommand implements DiscordCommand {
     String suffix =
         suffixes.stream().skip(new Random().nextInt(suffixes.size())).findFirst().orElse("");
 
-    event.reply("<a:donketwerk:934113221315551352> **"
-        + NumberFormat.getIntegerInstance()
-        .format(heehawRepository.findFirstByOrderByIdDesc().getId())
-        + " Heehaws**, and counting! "
-        + suffix).block();
+    event
+        .reply(
+            Constants.EMOJI_DONKETWERK
+                + " **"
+                + NumberFormat.getIntegerInstance()
+                    .format(heehawRepository.findFirstByOrderByIdDesc().getId())
+                + " Heehaws**, and counting! "
+                + suffix)
+        .block();
 
     return Mono.empty();
   }
