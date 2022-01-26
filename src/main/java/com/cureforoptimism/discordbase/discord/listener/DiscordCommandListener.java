@@ -1,5 +1,6 @@
 package com.cureforoptimism.discordbase.discord.listener;
 
+import com.cureforoptimism.discordbase.Constants;
 import com.cureforoptimism.discordbase.discord.command.DiscordCommand;
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
@@ -41,6 +42,8 @@ public class DiscordCommandListener {
       if (pattern.matcher(message.toLowerCase()).matches()
           || heehee.matcher(message.toLowerCase()).matches()) {
         message = "!heehaw";
+      } else if (message.toLowerCase().startsWith(Constants.EMOJI_PRAY)) {
+        message = "!pray";
       } else if (!message.startsWith("!")) {
         return;
       }
