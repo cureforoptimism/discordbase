@@ -7,11 +7,13 @@ import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
 import java.util.Date;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 @Component
 @AllArgsConstructor
+@Slf4j
 public class PrayCommand implements DiscordCommand {
   private final PrayerRepository prayerRepository;
 
@@ -37,6 +39,8 @@ public class PrayCommand implements DiscordCommand {
 
   @Override
   public Mono<Message> handle(MessageCreateEvent event) {
+    log.info("!pray command received");
+
     Long discordId = event.getMessage().getUserData().id().asLong();
     if (!canPray(discordId)) {
       return Mono.empty();
