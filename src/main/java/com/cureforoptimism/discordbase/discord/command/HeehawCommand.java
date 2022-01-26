@@ -24,7 +24,7 @@ import reactor.core.publisher.Mono;
 public class HeehawCommand implements DiscordCommand {
   private final HeehawRepository heehawRepository;
   private final Set<String> suffixes;
-  private ByteArrayInputStream heehee;
+  private byte[] heehee;
   final Pattern hehePattern = Pattern.compile("^!?he+he+", Pattern.MULTILINE);
 
   public HeehawCommand(HeehawRepository heehawRepository) {
@@ -33,9 +33,7 @@ public class HeehawCommand implements DiscordCommand {
     this.suffixes = Set.of("Heehaw!");
 
     try {
-      this.heehee =
-          new ByteArrayInputStream(
-              new ClassPathResource("heehee.jpg").getInputStream().readAllBytes());
+      this.heehee = new ClassPathResource("heehee.jpg").getInputStream().readAllBytes();
     } catch (IOException ex) {
       log.error("Unable to load image", ex);
       System.exit(-1);
@@ -74,7 +72,9 @@ public class HeehawCommand implements DiscordCommand {
           .flatMap(
               c ->
                   c.createMessage(
-                      MessageCreateSpec.builder().addFile("heehee.jpg", this.heehee).build()));
+                      MessageCreateSpec.builder()
+                          .addFile("heehee.jpg", new ByteArrayInputStream(this.heehee))
+                          .build()));
     }
 
     heehawRepository.save(
