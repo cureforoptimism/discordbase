@@ -39,10 +39,6 @@ public class DiscordCommandListener {
   public void handle(MessageCreateEvent event) {
     try {
       String message = event.getMessage().getContent().toLowerCase();
-      event.getMessage().getStickers().forEach(s -> log.info("STICKER: " + s.getName()));
-
-      // TODO: REMOVE; I NEED TO CAPTURE SOME EMOJI CODES AND THIS IS ONE WAY TO DO IT
-      log.info(message);
 
       if (pattern.matcher(message.toLowerCase()).matches()
           || heehee.matcher(message.toLowerCase()).matches()) {
