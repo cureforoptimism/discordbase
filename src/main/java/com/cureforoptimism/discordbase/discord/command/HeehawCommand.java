@@ -6,22 +6,40 @@ import com.cureforoptimism.discordbase.repository.HeehawRepository;
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
+import discord4j.core.spec.MessageCreateSpec;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.Date;
 import java.util.Random;
 import java.util.Set;
+import java.util.regex.Pattern;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 @Component
+@Slf4j
 public class HeehawCommand implements DiscordCommand {
   private final HeehawRepository heehawRepository;
   private final Set<String> suffixes;
+  private ByteArrayInputStream heehee;
+  final Pattern hehePattern = Pattern.compile("^!?he+he+", Pattern.MULTILINE);
 
   public HeehawCommand(HeehawRepository heehawRepository) {
     this.heehawRepository = heehawRepository;
 
     this.suffixes = Set.of("Heehaw!");
+
+    try {
+      this.heehee =
+          new ByteArrayInputStream(
+              new ClassPathResource("heehee.jpg").getInputStream().readAllBytes());
+    } catch (IOException ex) {
+      log.error("Unable to load image", ex);
+      System.exit(-1);
+    }
   }
 
   @Override
@@ -43,6 +61,20 @@ public class HeehawCommand implements DiscordCommand {
   public Mono<Message> handle(MessageCreateEvent event) {
     if (!canHeeHaw(event.getMessage().getUserData().id().asLong())) {
       return Mono.empty();
+    }
+
+    String msg = event.getMessage().getContent();
+    String[] parts = msg.split(" ");
+
+    // Heehee?
+    if (hehePattern.matcher(parts[0]).matches()) {
+      return event
+          .getMessage()
+          .getChannel()
+          .flatMap(
+              c ->
+                  c.createMessage(
+                      MessageCreateSpec.builder().addFile("heehee.jpg", this.heehee).build()));
     }
 
     heehawRepository.save(
