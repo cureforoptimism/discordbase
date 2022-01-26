@@ -65,7 +65,7 @@ public class HeehawCommand implements DiscordCommand {
     String[] parts = msg.split(" ");
 
     // Heehee?
-    if (hehePattern.matcher(parts[0]).matches()) {
+    if (hehePattern.matcher(parts[0].toLowerCase()).matches()) {
       return event
           .getMessage()
           .getChannel()
