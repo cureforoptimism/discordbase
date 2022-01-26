@@ -31,6 +31,11 @@ public class PrayCommand implements DiscordCommand {
   }
 
   @Override
+  public Boolean adminOnly() {
+    return false;
+  }
+
+  @Override
   public Mono<Message> handle(MessageCreateEvent event) {
     Long discordId = event.getMessage().getUserData().id().asLong();
     if (!canPray(discordId)) {

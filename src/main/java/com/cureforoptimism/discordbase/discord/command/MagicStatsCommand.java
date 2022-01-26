@@ -36,6 +36,11 @@ public class MagicStatsCommand implements DiscordCommand {
   }
 
   @Override
+  public Boolean adminOnly() {
+    return false;
+  }
+
+  @Override
   public Mono<Message> handle(MessageCreateEvent event) {
     CoinFullData coinData = coinGeckoService.getCoinFullData();
 

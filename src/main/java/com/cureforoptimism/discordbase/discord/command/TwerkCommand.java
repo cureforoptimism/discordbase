@@ -83,6 +83,11 @@ public class TwerkCommand implements DiscordCommand {
   }
 
   @Override
+  public Boolean adminOnly() {
+    return false;
+  }
+
+  @Override
   public Mono<Message> handle(MessageCreateEvent event) {
     return event
         .getMessage()

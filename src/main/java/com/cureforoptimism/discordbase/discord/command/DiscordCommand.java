@@ -12,6 +12,8 @@ public interface DiscordCommand {
 
   String getUsage();
 
+  Boolean adminOnly();
+
   // Text command
   Mono<Message> handle(MessageCreateEvent event);
 

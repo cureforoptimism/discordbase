@@ -35,10 +35,19 @@ public class HelpCommand implements DiscordCommand {
   }
 
   @Override
+  public Boolean adminOnly() {
+    return false;
+  }
+
+  @Override
   public Mono<Message> handle(MessageCreateEvent event) {
     StringBuilder helpMsg = new StringBuilder();
 
     for (DiscordCommand command : commands) {
+      if (command.adminOnly()) {
+        continue;
+      }
+
       helpMsg.append("`!").append(command.getName());
 
       if (command.getUsage() != null) {

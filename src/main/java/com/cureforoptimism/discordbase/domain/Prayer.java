@@ -20,9 +20,9 @@ public class Prayer {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   Long id;
 
-  Long discordUserId;
+  @Getter Long discordUserId;
 
-  String discordId;
+  @Getter String discordId;
 
   @Getter Date createdAt;
 }

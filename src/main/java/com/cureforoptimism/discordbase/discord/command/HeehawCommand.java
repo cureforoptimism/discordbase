@@ -56,6 +56,11 @@ public class HeehawCommand implements DiscordCommand {
   }
 
   @Override
+  public Boolean adminOnly() {
+    return false;
+  }
+
+  @Override
   public Mono<Message> handle(MessageCreateEvent event) {
     if (!canHeeHaw(event.getMessage().getUserData().id().asLong())) {
       return Mono.empty();

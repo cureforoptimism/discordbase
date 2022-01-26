@@ -31,6 +31,11 @@ public class MagicCommand implements DiscordCommand {
   }
 
   @Override
+  public Boolean adminOnly() {
+    return adminOnly();
+  }
+
+  @Override
   public Mono<Message> handle(MessageCreateEvent event) {
     return event
         .getMessage()
