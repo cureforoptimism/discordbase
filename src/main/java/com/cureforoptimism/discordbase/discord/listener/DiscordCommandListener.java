@@ -38,12 +38,20 @@ public class DiscordCommandListener {
 
   public void handle(MessageCreateEvent event) {
     try {
+      // 933053775453757530 is #the-barn; let's ignore stuff in there
+      final var channelId = event.getMessage().getChannel().block().getId().asLong();
+
+      if (channelId == 933053775453757530L) {
+        return;
+      }
+
       String message = event.getMessage().getContent().toLowerCase();
 
       if (pattern.matcher(message.toLowerCase()).matches()
           || heehee.matcher(message.toLowerCase()).matches()) {
         message = "!heehaw";
-      } else if (message.toLowerCase().startsWith(Constants.EMOJI_PRAY) || message.toLowerCase().startsWith("<:holydonke:934097858574053416>")) {
+      } else if (message.toLowerCase().startsWith(Constants.EMOJI_PRAY)
+          || message.toLowerCase().startsWith("<:holydonke:934097858574053416>")) {
         message = "!pray";
       } else if (!message.startsWith("!")) {
         return;
