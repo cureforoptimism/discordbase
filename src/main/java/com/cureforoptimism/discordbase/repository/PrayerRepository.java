@@ -10,7 +10,8 @@ public interface PrayerRepository extends JpaRepository<Prayer, Long> {
   Optional<Prayer> findFirstByDiscordUserIdOrderByCreatedAtDesc(Long discordUserId);
 
   @Query(
-      value = "SELECT * FROM prayer p GROUP BY discord_id ORDER BY COUNT(discord_id) DESC LIMIT 20;",
+      value =
+          "SELECT * FROM prayer p GROUP BY discord_id ORDER BY COUNT(discord_id) DESC LIMIT 20;",
       nativeQuery = true)
   List<Prayer> topPrayers();
 
