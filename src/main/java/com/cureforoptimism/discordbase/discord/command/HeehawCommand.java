@@ -25,7 +25,9 @@ public class HeehawCommand implements DiscordCommand {
   private final HeehawRepository heehawRepository;
   private final Set<String> suffixes;
   private byte[] heehee;
+  private byte[] yeehaw;
   final Pattern hehePattern = Pattern.compile("^!?he+he+", Pattern.MULTILINE);
+  final Pattern yeehawPattern = Pattern.compile("^!?ye+ha+w+", Pattern.MULTILINE);
 
   public HeehawCommand(HeehawRepository heehawRepository) {
     this.heehawRepository = heehawRepository;
@@ -34,6 +36,7 @@ public class HeehawCommand implements DiscordCommand {
 
     try {
       this.heehee = new ClassPathResource("heehee.jpg").getInputStream().readAllBytes();
+      this.yeehaw = new ClassPathResource("yeehaw.jpg").getInputStream().readAllBytes();
     } catch (IOException ex) {
       log.error("Unable to load image", ex);
       System.exit(-1);
@@ -79,6 +82,17 @@ public class HeehawCommand implements DiscordCommand {
                   c.createMessage(
                       MessageCreateSpec.builder()
                           .addFile("heehee.jpg", new ByteArrayInputStream(this.heehee))
+                          .build()));
+    } else if (yeehawPattern.matcher(parts[0].toLowerCase()).matches()) {
+      // TODO: DRY, for the love of God
+      return event
+          .getMessage()
+          .getChannel()
+          .flatMap(
+              c ->
+                  c.createMessage(
+                      MessageCreateSpec.builder()
+                          .addFile("yeehaw.jpg", new ByteArrayInputStream(this.yeehaw))
                           .build()));
     }
 
