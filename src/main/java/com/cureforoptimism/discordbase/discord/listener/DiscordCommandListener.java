@@ -1,6 +1,7 @@
 package com.cureforoptimism.discordbase.discord.listener;
 
 import com.cureforoptimism.discordbase.Constants;
+import com.cureforoptimism.discordbase.application.DiscordBot;
 import com.cureforoptimism.discordbase.discord.command.DiscordCommand;
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
@@ -14,6 +15,7 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 public class DiscordCommandListener {
+  private DiscordBot discordBot;
   private final Collection<DiscordCommand> commands;
   final Pattern pattern = Pattern.compile("^!?he+ha+w+", Pattern.MULTILINE);
   final Pattern heehee = Pattern.compile("^!?he+he+", Pattern.MULTILINE);
@@ -21,6 +23,11 @@ public class DiscordCommandListener {
 
   public DiscordCommandListener(ApplicationContext applicationContext) {
     commands = applicationContext.getBeansOfType(DiscordCommand.class).values();
+    discordBot = applicationContext.getBean(DiscordBot.class);
+  }
+
+  public void setDiscordBot(DiscordBot discordBot) {
+    this.discordBot = discordBot;
   }
 
   public Mono<Void> handle(ChatInputInteractionEvent event) {
@@ -39,10 +46,8 @@ public class DiscordCommandListener {
 
   public void handle(MessageCreateEvent event) {
     try {
-      // 933053775453757530 is #the-barn, and 934412437707431976L is donkivia; let's ignore stuff in there
-      final var channelId = event.getMessage().getChannel().block().getId().asLong();
-
-      if (channelId == 934412437707431976L) { // || channelId == 933053775453757530L) {
+      final var ignoredChannels = discordBot.getIgnoredChannels();
+      if (ignoredChannels.contains(event.getMessage().getChannel().block().getId().asLong())) {
         return;
       }
 
@@ -55,8 +60,6 @@ public class DiscordCommandListener {
       } else if (message.toLowerCase().startsWith(Constants.EMOJI_PRAY)
           || message.toLowerCase().startsWith("<:holydonke:934097858574053416>")) {
         message = "!pray";
-      } else if (yeehaw.matcher(message.toLowerCase()).matches()) {
-
       } else if (!message.startsWith("!")) {
         return;
       }

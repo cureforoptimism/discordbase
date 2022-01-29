@@ -1,5 +1,6 @@
 package com.cureforoptimism.discordbase.application;
 
+import com.cureforoptimism.discordbase.Constants;
 import com.cureforoptimism.discordbase.discord.event.RefreshEvent;
 import com.cureforoptimism.discordbase.discord.listener.DiscordCommandListener;
 import com.cureforoptimism.discordbase.service.TokenService;
@@ -15,7 +16,9 @@ import discord4j.discordjson.json.ApplicationCommandRequest;
 import discord4j.rest.service.ApplicationService;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
@@ -31,6 +34,7 @@ public class DiscordBot implements ApplicationRunner {
   final ApplicationContext context;
   static GatewayDiscordClient client;
   final TokenService tokenService;
+  @Getter final Set<Long> ignoredChannels;
 
   // TODO: This sucks. Makes this suck less with a rational pattern.
   @Getter Double currentPrice;
@@ -46,6 +50,9 @@ public class DiscordBot implements ApplicationRunner {
   public DiscordBot(ApplicationContext context, TokenService tokenService) {
     this.context = context;
     this.tokenService = tokenService;
+
+    this.ignoredChannels = new HashSet<>();
+    this.ignoredChannels.add(Constants.CHANNEL_DONKIVIA);
   }
 
   public void refreshMagicPrice(
@@ -108,6 +115,56 @@ public class DiscordBot implements ApplicationRunner {
 
     manageSlashCommands(client);
 
+    //    final var channel = client
+    //        .getChannelById(Snowflake.of(934757662397190195L)).block();
+    //    final var messages =
+    // channel.getRestChannel().getMessagesAfter(Snowflake.of(936370363435216937L));
+    //    final var prayers = new HashMap<String, Integer>();
+    //    messages
+    //        .all(
+    //            m -> {
+    //              final var timestamp = m.timestamp();
+    //              final var instantStamp = Instant.parse(timestamp);
+    //
+    //              if(instantStamp.isAfter(Instant.parse("2022-01-27T22:30:00.728000+00:00"))) {
+    //                return true;
+    //              }
+    //
+    //              boolean prayerFound =
+    //                  m.content().startsWith("!pray")
+    //                      || m.content().toLowerCase().startsWith(Constants.EMOJI_PRAY)
+    //                      ||
+    // m.content().toLowerCase().startsWith("<:holydonke:934097858574053416>");
+    //
+    //              final var stickers = m.stickerItems();
+    //              if (!stickers.isAbsent()) {
+    //                for (PartialStickerData sticker : stickers.get()) {
+    //                  if (sticker.name().equalsIgnoreCase("pray")
+    //                      || sticker.name().equalsIgnoreCase("holy donkey")) {
+    //                    prayerFound = true;
+    //                  }
+    //                }
+    //              }
+    //
+    //              if (prayerFound) {
+    //                String humanId = m.author().username() + "#" + m.author().discriminator();
+    //
+    //                if (!prayers.containsKey(humanId)) {
+    //                  prayers.put(humanId, 0);
+    //                }
+    //
+    //                prayers.put(humanId, prayers.get(humanId) + 1);
+    //              }
+    //
+    //              return true;
+    //            })
+    //        .block();
+    //
+    //    final var list =
+    // prayers.entrySet().stream().sorted(Map.Entry.comparingByValue()).collect(Collectors.toList());
+    //    for(Map.Entry<String, Integer> entry : list) {
+    //      log.info(entry.getKey() + " - " + entry.getValue());
+    //    }
     log.info("Discord client logged in");
   }
 

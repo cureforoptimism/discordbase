@@ -1,5 +1,6 @@
 package com.cureforoptimism.discordbase.discord.command;
 
+import com.cureforoptimism.discordbase.Utilities;
 import com.cureforoptimism.discordbase.domain.Prayer;
 import com.cureforoptimism.discordbase.repository.PrayerRepository;
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
@@ -40,28 +41,7 @@ public class TopPrayers implements DiscordCommand {
 
   @Override
   public Mono<Message> handle(MessageCreateEvent event) {
-    // TODO: Make approved roles a set, and hardcode server ID so this can't be added elsewhere and
-    // queried
-    final var approved =
-        event
-            .getMember()
-            .filter(
-                m -> {
-                  final var role =
-                      m.getRoles()
-                          .filter(
-                              r ->
-                                  r.getName().equalsIgnoreCase("donkeynator")
-                                      || r.getName().equalsIgnoreCase("ass patrol")
-                                      || r.getName().equalsIgnoreCase("modonkey")
-                                      || r.getName().equals("core donkey"))
-                          .blockFirst();
-
-                  return role != null;
-                })
-            .orElse(null);
-
-    if (approved != null) {
+    if (Utilities.isAdminEvent(event)) {
       // Process!
       final List<Prayer> topPrayers = prayerRepository.topPrayers();
 
