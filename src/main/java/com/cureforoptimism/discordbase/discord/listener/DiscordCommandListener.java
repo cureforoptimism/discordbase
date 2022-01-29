@@ -39,10 +39,10 @@ public class DiscordCommandListener {
 
   public void handle(MessageCreateEvent event) {
     try {
-      // 933053775453757530 is #the-barn; let's ignore stuff in there
+      // 933053775453757530 is #the-barn, and 934412437707431976L is donkivia; let's ignore stuff in there
       final var channelId = event.getMessage().getChannel().block().getId().asLong();
 
-      if (channelId == 933053775453757530L) {
+      if (channelId == 933053775453757530L || channelId == 934412437707431976L) {
         return;
       }
 
