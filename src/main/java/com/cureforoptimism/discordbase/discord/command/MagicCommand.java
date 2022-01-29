@@ -32,7 +32,7 @@ public class MagicCommand implements DiscordCommand {
 
   @Override
   public Boolean adminOnly() {
-    return adminOnly();
+    return true;
   }
 
   @Override
