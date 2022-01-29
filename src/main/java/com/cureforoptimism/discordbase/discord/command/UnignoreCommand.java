@@ -77,8 +77,8 @@ public class UnignoreCommand implements DiscordCommand {
         .flatMap(
             c ->
                 c.createMessage(
-                    "Unignoring channel ID: "
-                        + channelId
+                    "Unignoring channel: "
+                        + parts[1]
                         + "; to start ignoring again, use !ignore <channel_id>"));
   }
 

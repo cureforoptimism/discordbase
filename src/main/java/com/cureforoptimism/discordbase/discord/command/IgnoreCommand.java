@@ -66,7 +66,7 @@ public class IgnoreCommand implements DiscordCommand {
           .flatMap(
               c ->
                   c.createMessage(
-                      "Invalid channel ID specified; please use channel ID (e.g. 933053775453757530) for now!"));
+                      "Invalid channel specified"));
     }
 
     discordBot.getIgnoredChannels().add(channelId);
@@ -77,8 +77,8 @@ public class IgnoreCommand implements DiscordCommand {
         .flatMap(
             c ->
                 c.createMessage(
-                    "Now ignoring channel ID: "
-                        + channelId
+                    "Now ignoring channel: "
+                        + parts[1]
                         + "; to start listening again, use !unignore <channel_id>"));
   }
 
