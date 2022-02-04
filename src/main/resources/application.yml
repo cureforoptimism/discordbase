@@ -6,7 +6,7 @@ spring:
 
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3307}/donkeybot?createDatabaseIfNotExist=true
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3307}/donkeybot?createDatabaseIfNotExist=true&useUnicode=yes&characterEncoding=UTF-8
     username: root
     password: password
 
