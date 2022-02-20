@@ -63,10 +63,7 @@ public class IgnoreCommand implements DiscordCommand {
       return event
           .getMessage()
           .getChannel()
-          .flatMap(
-              c ->
-                  c.createMessage(
-                      "Invalid channel specified"));
+          .flatMap(c -> c.createMessage("Invalid channel specified"));
     }
 
     discordBot.getIgnoredChannels().add(channelId);

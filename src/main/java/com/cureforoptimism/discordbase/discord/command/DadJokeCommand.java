@@ -30,25 +30,24 @@ public class DadJokeCommand implements DiscordCommand {
   }
 
   public DadJokeCommand() {
-    log.info("READING DAD JOKES");
     jokes = new ArrayList<>();
 
     try {
       final var jokeStream = new ClassPathResource("dadjokes.txt").getInputStream();
 
-      String[] jokesPairs = new String(jokeStream.readAllBytes(), StandardCharsets.UTF_8).split("\n");
+      String[] jokesPairs =
+          new String(jokeStream.readAllBytes(), StandardCharsets.UTF_8).split("\n");
 
       int x = 1;
       String previousPart = "";
-      for(String part : jokesPairs) {
-        if(part.isEmpty()) {
+      for (String part : jokesPairs) {
+        if (part.isEmpty()) {
           x = 1;
           continue;
         }
 
-        if(x % 2 == 0) {
+        if (x % 2 == 0) {
           jokes.add(new Joke(previousPart, part));
-          log.info("ADDING DAD JOKE: " + previousPart);
         } else {
           previousPart = part;
         }
@@ -58,8 +57,6 @@ public class DadJokeCommand implements DiscordCommand {
     } catch (IOException ex) {
       log.error("Unable to read joke file", ex);
     }
-
-    log.info("DAD JOKES: " + jokes.size());
   }
 
   @Override
@@ -91,14 +88,20 @@ public class DadJokeCommand implements DiscordCommand {
   public Mono<Message> handle(MessageCreateEvent event) {
     Joke joke = getRandomJoke();
 
-    return event.getMessage().getChannel().flatMap(c -> c.createMessage(joke.question + "\n" + joke.answer + Constants.EMOJI_HEEHAW));
+    return event
+        .getMessage()
+        .getChannel()
+        .flatMap(
+            c ->
+                c.createMessage(
+                    joke.question + "\n||" + joke.answer + "||" + Constants.EMOJI_HEEHAW));
   }
 
   @Override
   public Mono<Void> handle(ChatInputInteractionEvent event) {
     Joke joke = getRandomJoke();
 
-    event.reply(joke.question + "\n" + joke.answer + Constants.EMOJI_HEEHAW).block();
+    event.reply(joke.question + "\n||" + joke.answer + "||" + Constants.EMOJI_HEEHAW).block();
 
     return Mono.empty();
   }
