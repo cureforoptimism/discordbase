@@ -36,7 +36,7 @@ public class DadJokeCommand implements DiscordCommand {
     try {
       final var jokeStream = new ClassPathResource("dadjokes.txt").getInputStream();
 
-      String[] jokesPairs = new String(jokeStream.readAllBytes(), StandardCharsets.UTF_8).split("\r\n");
+      String[] jokesPairs = new String(jokeStream.readAllBytes(), StandardCharsets.UTF_8).split("\n");
 
       int x = 1;
       String previousPart = "";
