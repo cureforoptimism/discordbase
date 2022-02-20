@@ -30,6 +30,7 @@ public class DadJokeCommand implements DiscordCommand {
   }
 
   public DadJokeCommand() {
+    log.info("READING DAD JOKES");
     jokes = new ArrayList<>();
 
     try {
@@ -47,6 +48,7 @@ public class DadJokeCommand implements DiscordCommand {
 
         if(x % 2 == 0) {
           jokes.add(new Joke(previousPart, part));
+          log.info("ADDING DAD JOKE: " + previousPart);
         } else {
           previousPart = part;
         }
@@ -56,6 +58,8 @@ public class DadJokeCommand implements DiscordCommand {
     } catch (IOException ex) {
       log.error("Unable to read joke file", ex);
     }
+
+    log.info("DAD JOKES: " + jokes.size());
   }
 
   @Override
