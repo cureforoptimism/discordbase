@@ -20,6 +20,7 @@ public class DiscordCommandListener {
   final Pattern pattern = Pattern.compile("^!?he+ha+w+", Pattern.MULTILINE);
   final Pattern heehee = Pattern.compile("^!?he+he+", Pattern.MULTILINE);
   final Pattern yeehaw = Pattern.compile("^!?ye+ha+w+", Pattern.MULTILINE);
+  final Pattern hoihaw = Pattern.compile("^!?ho+i+ha+w+", Pattern.MULTILINE);
 
   public DiscordCommandListener(ApplicationContext applicationContext) {
     commands = applicationContext.getBeansOfType(DiscordCommand.class).values();
@@ -55,7 +56,8 @@ public class DiscordCommandListener {
 
       if (pattern.matcher(message).matches()
           || heehee.matcher(message).matches()
-          || yeehaw.matcher(message).matches()) {
+          || yeehaw.matcher(message).matches()
+          || hoihaw.matcher(message).matches()) {
         message = "!heehaw";
       } else if (message.toLowerCase().startsWith(Constants.EMOJI_PRAY)
           || message.toLowerCase().startsWith("<:holydonke:934097858574053416>")) {
