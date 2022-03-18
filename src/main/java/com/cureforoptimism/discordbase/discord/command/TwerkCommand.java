@@ -64,7 +64,13 @@ public class TwerkCommand implements DiscordCommand {
             + " "
             + Constants.EMOJI_SMOLTWERK
             + " "
-            + Constants.EMOJI_SMOLTWERK
+            + Constants.EMOJI_SMOLTWERK,
+              Constants.EMOJI_DONKETWERK + " " + Constants.EMOJI_DONKETWERK + " " + Constants.EMOJI_DONKETWERK + " " + Constants.EMOJI_DONKETWERK + " " + Constants.EMOJI_DONKETWERK + " " + Constants.EMOJI_DONKETWERK + "\n"
+              + "    " + Constants.EMOJI_DONKETWERK + " " + Constants.EMOJI_DONKETWERK + " " + Constants.EMOJI_DONKETWERK + " " + Constants.EMOJI_DONKETWERK + " " + Constants.EMOJI_DONKETWERK + "\n"
+              + "        " + Constants.EMOJI_DONKETWERK + " " + Constants.EMOJI_DONKETWERK + " " + Constants.EMOJI_DONKETWERK + " " + Constants.EMOJI_DONKETWERK + "\n"
+              + "            " + Constants.EMOJI_DONKETWERK + " " + Constants.EMOJI_DONKETWERK + " " + Constants.EMOJI_DONKETWERK + "\n"
+              + "               " + Constants.EMOJI_DONKETWERK + " " + Constants.EMOJI_DONKETWERK + "\n"
+              + "                   " + Constants.EMOJI_DONKETWERK
       };
 
   @Override
