@@ -23,6 +23,14 @@
                   value: mysql
                 - name: MYSQL_PORT
                   value: "3306"
+                volumeMounts:
+                  - name: donkeybot-persistent-storage
+                    mountPath: /discordbase/img_cache
+              volumes:
+                - name: donkeybot-persistent-storage
+                  persistentVolumeClaim:
+                    claimName: nfs-discordbot-pvc
+
           selector:
             matchLabels:
               app: donkeybot

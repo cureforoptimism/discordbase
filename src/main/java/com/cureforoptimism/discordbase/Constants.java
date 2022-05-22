@@ -8,4 +8,6 @@ public class Constants {
   public static final String EMOJI_PRAY = "\uD83D\uDE4F";
   public static final Long CHANNEL_DONKIVIA = 934412437707431976L;
   public static final Long CHANNEL_BARNYARD = 933053775453757530L;
+  public static final Long CHANNEL_SALES_BOT = 977773648922423336L;
+  public static final Long CHANNEL_TEST_GENERAL = 926303694801223751L;
 }
