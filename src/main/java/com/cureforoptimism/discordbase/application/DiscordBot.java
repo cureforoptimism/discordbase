@@ -262,7 +262,7 @@ public class DiscordBot implements ApplicationRunner {
 
         messages.block();
       } catch (Exception ex) {
-        log.warn("Unable to post to channel: " + discordChannelId);
+        log.warn("Unable to post to channel: " + discordChannelId, ex);
       }
     }
   }

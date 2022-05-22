@@ -33,7 +33,7 @@ public class SalesService {
   private final DiscordBot discordBot;
   private final Utilities utilities;
 
-  @Scheduled(fixedDelay = 60000, initialDelay = 1000)
+  @Scheduled(fixedDelay = 30000, initialDelay = 10000)
   public synchronized void postNewSales() {
     if (discordBot.getCurrentPrice() == null) {
       return;
