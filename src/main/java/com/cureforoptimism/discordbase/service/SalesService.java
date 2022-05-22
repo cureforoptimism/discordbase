@@ -75,10 +75,12 @@ public class SalesService {
       Double currentPrice = discordBot.getCurrentPrice();
 
       List<Long> channelList = new ArrayList<>();
-      channelList.add(Constants.CHANNEL_TEST_GENERAL);
       if (System.getenv("PROD") != null) {
         channelList.add(Constants.CHANNEL_SALES_BOT);
       }
+
+      // Odd; additional channels don't get the image. Maybe need separate file uploads.
+      channelList.add(Constants.CHANNEL_TEST_GENERAL);
 
       for (DonkSale donkSale : newSales) {
         final BigDecimal usdPrice =
