@@ -1,9 +1,13 @@
 package com.cureforoptimism.discordbase;
 
+import com.cureforoptimism.discordbase.domain.RarityRank;
+import com.cureforoptimism.discordbase.repository.DonkRarityRankRepository;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -15,11 +19,58 @@ import java.time.Duration;
 import java.util.Optional;
 import javax.imageio.ImageIO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
 public class Utilities {
+  private final DonkRarityRankRepository donkRarityRankRepository;
+
+  public Utilities(DonkRarityRankRepository donkRarityRankRepository) {
+    this.donkRarityRankRepository = donkRarityRankRepository;
+
+    // Uncomment to regenerate rarities
+    //    generateRanks();
+  }
+
+  void generateRanks() {
+    InputStream csv;
+    CSVParser parser;
+
+    try {
+      csv = new ClassPathResource("rarities.csv").getInputStream();
+    } catch (IOException ex) {
+      log.error("Unable to read CSV", ex);
+      return;
+    }
+
+    try {
+      parser = CSVFormat.RFC4180.withFirstRecordAsHeader().parse(new InputStreamReader(csv));
+    } catch (IOException ex) {
+      log.error("Unable to parse CSV", ex);
+      return;
+    }
+
+    parser.stream()
+        .forEach(
+            r -> {
+              final var rank = r.get("nft_rank");
+              final var id = r.get("id");
+              final var score = r.get("rarity score");
+
+              donkRarityRankRepository.save(
+                  RarityRank.builder()
+                      .donkId(Long.parseLong(id))
+                      .rank(Integer.parseInt(rank))
+                      .score(Double.parseDouble(score.replace(",", "")))
+                      .build());
+            });
+    log.info("rarities generated and saved");
+  }
+
   public static boolean isAdminEvent(MessageCreateEvent event) {
     // TODO: Make approved roles a set, and hardcode server ID so this can't be added elsewhere and
     // queried
