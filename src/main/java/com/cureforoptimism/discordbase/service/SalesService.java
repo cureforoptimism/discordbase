@@ -143,7 +143,7 @@ public class SalesService {
                 .addEmbed(
                     EmbedCreateSpec.builder()
                         .description("**SOLD**\nThe Lost Donkeys #" + adjustedTokenId + " (Rarity Rank **#" + donkRarityRankRepository.findByDonkId(
-                            (long) donkSale.getTokenId()).getRank() + "**)")
+                            (long) adjustedTokenId).getRank() + "**)")
                         .addField(
                             "MAGIC",
                             decimalFormatOptionalZeroes.format(donkSale.getSalePrice()),
