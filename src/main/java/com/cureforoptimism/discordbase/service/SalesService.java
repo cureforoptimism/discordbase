@@ -82,7 +82,7 @@ public class SalesService {
         return;
       }
       final NumberFormat decimalFormatZeroes = new DecimalFormat("#,###.00");
-      final NumberFormat decimalFormatOptionalZeroes = new DecimalFormat("0.##");
+      final NumberFormat decimalFormatOptionalZeroes = new DecimalFormat("0.###");
       Double currentPrice = discordBot.getCurrentPrice();
 
       List<Long> channelList = new ArrayList<>();
@@ -211,7 +211,7 @@ public class SalesService {
         return;
       }
       final NumberFormat decimalFormatZeroes = new DecimalFormat("#,###.00");
-      final NumberFormat decimalFormatOptionalZeroes = new DecimalFormat("0.##");
+      final NumberFormat decimalFormatOptionalZeroes = new DecimalFormat("0.###");
       Double currentPrice = discordBot.getCurrentPrice();
 
       List<Long> channelList = new ArrayList<>();
