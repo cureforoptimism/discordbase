@@ -3,7 +3,9 @@ package com.cureforoptimism.discordbase.service;
 import com.cureforoptimism.discordbase.Constants;
 import com.cureforoptimism.discordbase.Utilities;
 import com.cureforoptimism.discordbase.application.DiscordBot;
+import com.cureforoptimism.discordbase.domain.DonkList;
 import com.cureforoptimism.discordbase.domain.DonkSale;
+import com.cureforoptimism.discordbase.repository.DonkListRepository;
 import com.cureforoptimism.discordbase.repository.DonkRarityRankRepository;
 import com.cureforoptimism.discordbase.repository.DonkSaleRepository;
 import discord4j.core.spec.EmbedCreateSpec;
@@ -29,13 +31,20 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class SalesService {
   private final DonkRarityRankRepository donkRarityRankRepository;
+  private final DonkListRepository donkListRepository;
   private final DonkSaleRepository donkSaleRepository;
   private final CoinGeckoService coinGeckoService;
-  private Date lastPostedBlockTimestamp = null;
+  private Date lastPostedBlockSalesTimestamp = null;
+  private Date lastPostedBlockListingsTimestamp = null;
   private final DiscordBot discordBot;
   private final Utilities utilities;
 
   @Scheduled(fixedDelay = 30000, initialDelay = 10000)
+  public synchronized void postNewMarketplaceActivities() {
+    postNewSales();
+    postNewListings();
+  }
+
   public synchronized void postNewSales() {
     if (discordBot.getCurrentPrice() == null) {
       return;
@@ -45,12 +54,12 @@ public class SalesService {
     //      return;
     //    }
 
-    if (lastPostedBlockTimestamp == null) {
+    if (lastPostedBlockSalesTimestamp == null) {
       DonkSale lastPostedDonkSale =
           donkSaleRepository.findFirstByPostedIsTrueOrderByBlockTimestampDesc();
 
       if (lastPostedDonkSale != null) {
-        lastPostedBlockTimestamp =
+        lastPostedBlockSalesTimestamp =
             donkSaleRepository
                 .findFirstByPostedIsTrueOrderByBlockTimestampDesc()
                 .getBlockTimestamp();
@@ -65,7 +74,7 @@ public class SalesService {
 
     List<DonkSale> newSales =
         donkSaleRepository.findByBlockTimestampIsAfterAndPostedIsFalseOrderByBlockTimestampAsc(
-            lastPostedBlockTimestamp);
+            lastPostedBlockSalesTimestamp);
     if (!newSales.isEmpty()) {
       final Optional<Double> ethMktPriceOpt = coinGeckoService.getEthPrice();
       if (ethMktPriceOpt.isEmpty()) {
@@ -142,8 +151,14 @@ public class SalesService {
                 .addFile("tld_" + adjustedTokenId + ".png", new ByteArrayInputStream(bytes))
                 .addEmbed(
                     EmbedCreateSpec.builder()
-                        .description("**SOLD**\nThe Lost Donkeys #" + adjustedTokenId + " (Rarity Rank **#" + donkRarityRankRepository.findByDonkId(
-                            (long) adjustedTokenId).getRank() + "**)")
+                        .description(
+                            "**SOLD**\nThe Lost Donkeys #"
+                                + adjustedTokenId
+                                + " (Rarity Rank **#"
+                                + donkRarityRankRepository
+                                    .findByDonkId((long) adjustedTokenId)
+                                    .getRank()
+                                + "**)")
                         .addField(
                             "MAGIC",
                             decimalFormatOptionalZeroes.format(donkSale.getSalePrice()),
@@ -162,8 +177,108 @@ public class SalesService {
 
         log.info("New donk sale posted for " + donkSale.getTokenId());
 
-        if (donkSale.getBlockTimestamp().after(lastPostedBlockTimestamp)) {
-          lastPostedBlockTimestamp = donkSale.getBlockTimestamp();
+        if (donkSale.getBlockTimestamp().after(lastPostedBlockSalesTimestamp)) {
+          lastPostedBlockSalesTimestamp = donkSale.getBlockTimestamp();
+        }
+      }
+    }
+  }
+
+  public synchronized void postNewListings() {
+    if (discordBot.getCurrentPrice() == null) {
+      return;
+    }
+
+    if (lastPostedBlockListingsTimestamp == null) {
+      DonkList lastPostedDonkListing =
+          donkListRepository.findFirstByPostedIsTrueOrderByBlockTimestampDesc();
+
+      if (lastPostedDonkListing != null) {
+        lastPostedBlockListingsTimestamp =
+            donkListRepository
+                .findFirstByPostedIsTrueOrderByBlockTimestampDesc()
+                .getBlockTimestamp();
+      }
+    }
+
+    List<DonkList> newListings =
+        donkListRepository.findByBlockTimestampIsAfterAndPostedIsFalseOrderByBlockTimestampAsc(
+            lastPostedBlockListingsTimestamp);
+    if (!newListings.isEmpty()) {
+      final Optional<Double> ethMktPriceOpt = coinGeckoService.getEthPrice();
+      if (ethMktPriceOpt.isEmpty()) {
+        // This will retry once we have an ethereum price
+        return;
+      }
+      final NumberFormat decimalFormatZeroes = new DecimalFormat("#,###.00");
+      final NumberFormat decimalFormatOptionalZeroes = new DecimalFormat("0.##");
+      Double currentPrice = discordBot.getCurrentPrice();
+
+      List<Long> channelList = new ArrayList<>();
+      if (System.getenv("PROD") != null) {
+        channelList.add(Constants.CHANNEL_LIST_BOT);
+      }
+
+      // Odd; additional channels don't get the image. Maybe need separate file uploads.
+      channelList.add(Constants.CHANNEL_TEST_GENERAL);
+
+      for (DonkList donkListing : newListings) {
+        final BigDecimal usdPrice =
+            donkListing.getSalePrice().multiply(BigDecimal.valueOf(currentPrice));
+        final Double ethPrice = usdPrice.doubleValue() / ethMktPriceOpt.get();
+        final String ethValue = decimalFormatOptionalZeroes.format(ethPrice);
+        final String usdValue = decimalFormatZeroes.format(usdPrice);
+
+        final int adjustedTokenId = donkListing.getTokenId() + 1;
+
+        final var imgOpt = utilities.getDonkBufferedImage(Integer.toString(adjustedTokenId));
+        if (imgOpt.isEmpty()) {
+          return;
+        }
+
+        final var img = imgOpt.get();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+          ImageIO.write(img, "png", baos);
+        } catch (IOException e) {
+          e.printStackTrace();
+          return;
+        }
+
+        byte[] bytes = baos.toByteArray();
+        final MessageCreateSpec messageCreateSpec =
+            MessageCreateSpec.builder()
+                .addFile("tld_" + adjustedTokenId + ".png", new ByteArrayInputStream(bytes))
+                .addEmbed(
+                    EmbedCreateSpec.builder()
+                        .description(
+                            "**LISTED**\nThe Lost Donkeys #"
+                                + adjustedTokenId
+                                + " (Rarity Rank **#"
+                                + donkRarityRankRepository
+                                    .findByDonkId((long) adjustedTokenId)
+                                    .getRank()
+                                + "**)")
+                        .addField(
+                            "MAGIC",
+                            decimalFormatOptionalZeroes.format(donkListing.getSalePrice()),
+                            true)
+                        .addField("USD", "$" + usdValue, true)
+                        .addField("ETH", "Ξ" + ethValue, true)
+                        .image("attachment://tld_" + adjustedTokenId + ".png")
+                        .timestamp(donkListing.getBlockTimestamp().toInstant())
+                        .build())
+                .build();
+
+        discordBot.postMessage(messageCreateSpec, channelList);
+
+        donkListing.setPosted(true);
+        donkListRepository.save(donkListing);
+
+        log.info("New donk list posted for " + donkListing.getTokenId());
+
+        if (donkListing.getBlockTimestamp().after(lastPostedBlockListingsTimestamp)) {
+          lastPostedBlockListingsTimestamp = donkListing.getBlockTimestamp();
         }
       }
     }

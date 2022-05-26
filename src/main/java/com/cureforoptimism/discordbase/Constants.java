@@ -10,4 +10,5 @@ public class Constants {
   public static final Long CHANNEL_BARNYARD = 933053775453757530L;
   public static final Long CHANNEL_SALES_BOT = 977773648922423336L;
   public static final Long CHANNEL_TEST_GENERAL = 926303694801223751L;
+  public static final Long CHANNEL_LIST_BOT = 979225428357152788L;
 }
