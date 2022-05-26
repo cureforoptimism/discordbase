@@ -4,6 +4,7 @@ import com.cureforoptimism.discordbase.Constants;
 import com.cureforoptimism.discordbase.Utilities;
 import com.cureforoptimism.discordbase.application.DiscordBot;
 import com.cureforoptimism.discordbase.domain.DonkSale;
+import com.cureforoptimism.discordbase.repository.DonkRarityRankRepository;
 import com.cureforoptimism.discordbase.repository.DonkSaleRepository;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.core.spec.MessageCreateSpec;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @RequiredArgsConstructor
 public class SalesService {
+  private final DonkRarityRankRepository donkRarityRankRepository;
   private final DonkSaleRepository donkSaleRepository;
   private final CoinGeckoService coinGeckoService;
   private Date lastPostedBlockTimestamp = null;
@@ -140,7 +142,8 @@ public class SalesService {
                 .addFile("tld_" + adjustedTokenId + ".png", new ByteArrayInputStream(bytes))
                 .addEmbed(
                     EmbedCreateSpec.builder()
-                        .description("The Lost Donkeys #" + adjustedTokenId + " **SOLD**")
+                        .description("**SOLD**\nThe Lost Donkeys #" + adjustedTokenId + " (Rarity Rank **#" + donkRarityRankRepository.findByDonkId(
+                            (long) donkSale.getTokenId()).getRank() + "**)")
                         .addField(
                             "MAGIC",
                             decimalFormatOptionalZeroes.format(donkSale.getSalePrice()),
