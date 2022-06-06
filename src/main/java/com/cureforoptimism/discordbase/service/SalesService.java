@@ -10,6 +10,7 @@ import com.cureforoptimism.discordbase.repository.DonkRarityRankRepository;
 import com.cureforoptimism.discordbase.repository.DonkSaleRepository;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.core.spec.MessageCreateSpec;
+import discord4j.rest.util.Color;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -41,7 +42,7 @@ public class SalesService {
 
   @Scheduled(fixedDelay = 30000, initialDelay = 10000)
   public synchronized void postNewMarketplaceActivities() {
-    postNewSales();
+    //    postNewSales();
     postNewListings();
   }
 
@@ -251,8 +252,13 @@ public class SalesService {
                 .addFile("tld_" + adjustedTokenId + ".png", new ByteArrayInputStream(bytes))
                 .addEmbed(
                     EmbedCreateSpec.builder()
+                        .color(Color.BLUE)
+                        .title("LISTED")
+                        .url(
+                            "https://marketplace.treasure.lol/collection/the-lost-donkeys/"
+                                + donkListing.getTokenId())
                         .description(
-                            "**LISTED**\nThe Lost Donkeys #"
+                            "The Lost Donkeys #"
                                 + adjustedTokenId
                                 + " (Rarity Rank **#"
                                 + donkRarityRankRepository
