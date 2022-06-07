@@ -42,7 +42,7 @@ public class SalesService {
 
   @Scheduled(fixedDelay = 30000, initialDelay = 10000)
   public synchronized void postNewMarketplaceActivities() {
-    //    postNewSales();
+    postNewSales();
     postNewListings();
   }
 
