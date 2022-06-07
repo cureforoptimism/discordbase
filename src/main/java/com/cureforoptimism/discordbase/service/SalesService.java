@@ -57,9 +57,9 @@ public class SalesService {
       return;
     }
     // TODO: Perform this check, for sure, before posting tweets
-    //    if (System.getenv("PROD") == null) {
-    //      return;
-    //    }
+    if (System.getenv("PROD") == null) {
+      return;
+    }
 
     if (lastPostedBlockSalesTimestamp == null) {
       DonkSale lastPostedDonkSale =
