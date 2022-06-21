@@ -58,8 +58,6 @@ public class DiscordBot implements ApplicationRunner {
         .on(ChatInputInteractionEvent.class)
         .subscribe(commandListener::handle);
 
-    client.getEventDispatcher().on(MessageCreateEvent.class).subscribe(commandListener::handle);
-
     log.info("Discord client logged in");
   }
 
