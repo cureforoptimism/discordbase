@@ -17,15 +17,5 @@ public class MarketPriceMessageSubscriber {
 
   public void handleMessage(MarketPrice marketPrice) {
     lastMarketPlace = marketPrice;
-    discordBot.refreshMagicPrice(
-        marketPrice.getPrice(),
-        marketPrice.getChange(),
-        marketPrice.getVolume12h(),
-        marketPrice.getVolume24h(),
-        marketPrice.getChange1h(),
-        marketPrice.getVolume24h(),
-        marketPrice.getChange12h(),
-        marketPrice.getChange4h(),
-        marketPrice.getVolume1h());
   }
 }
