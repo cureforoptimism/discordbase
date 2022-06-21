@@ -55,7 +55,7 @@ public class SalesService {
     if (!newSales.isEmpty()) {
       final Double ethMktPrice = marketPriceMessageSubscriber.getLastMarketPlace().getEthPrice();
 
-      final NumberFormat decimalFormatZeroes = new DecimalFormat("#,###.00");
+      final NumberFormat decimalFormatZeroes = new DecimalFormat("#,###.000");
       final NumberFormat decimalFormatOptionalZeroes = new DecimalFormat("0.##");
 
       List<Long> channelList = new ArrayList<>();
