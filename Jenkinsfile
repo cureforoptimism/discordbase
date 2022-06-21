@@ -6,7 +6,7 @@ pipeline {
    stages {
        stage('Build Dockerfile and Publish') {
            environment {
-               TOKENS = credentials('birds_tokens.properties')
+               TOKENS = credentials('birds_token.properties')
            }
            steps{
                script {
