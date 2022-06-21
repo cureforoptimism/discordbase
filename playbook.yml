@@ -1,0 +1,43 @@
+- hosts: localhost
+  tasks:
+    - name: Deploy the service
+      k8s:
+        state: present
+        definition:
+          apiVersion: apps/v1
+          kind: StatefulSet
+          metadata:
+            name: birdsbladesbot
+          spec:
+            serviceName: birdsbladesbot
+            template:
+              metadata:
+                labels:
+                  app: birdsbladesbot
+              spec:
+                containers:
+                  - image: "{{ image }}"
+                    name: birdsbladesbot
+                    env:
+                      - name: MYSQL_HOST
+                        value: mysql
+                      - name: MYSQL_PORT
+                        value: "3306"
+                      - name: REDIS_HOST
+                        value: redis-master
+                      - name: REDIS_PORT
+                        value: "6379"
+                      - name: REDIS_PASSWORD
+                        value: "a8ElD0aWae"
+                    volumeMounts:
+                      - name: birdsbladesbot-persistent-storage
+                        mountPath: /discordbase/img_cache
+                volumes:
+                  - name: birdsbladesbot-persistent-storage
+                    persistentVolumeClaim:
+                      claimName: nfs-discordbot-pvc
+            selector:
+              matchLabels:
+                app: birdsbladesbot
+        validate_certs: no
+        namespace: discordbots
