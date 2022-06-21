@@ -5,5 +5,5 @@ public class Constants {
   public static final long CHANNEL_TEST_GENERAL = 926303694801223751L;
 
   // TODO: Update with live sales channel
-  public static final long CHANNEL_SALES_BOT = 926303694801223751L;
+  public static final long CHANNEL_SALES_BOT = 937917497112424500L;
 }
