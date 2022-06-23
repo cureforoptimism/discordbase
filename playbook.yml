@@ -1,38 +1,44 @@
 - hosts: localhost
   tasks:
-  - name: Deploy the service
-    k8s:
-      state: present
-      definition: 
-        apiVersion: apps/v1
-        kind: StatefulSet
-        metadata:
-          name: donkeybot
-        spec:
-          serviceName: donkeybot
-          template:
-            metadata:
-              labels:
-                app: donkeybot
-            spec:
-              containers:
-              - image: "{{ image }}"
-                name: donkeybot
-                env:
-                - name: MYSQL_HOST
-                  value: mysql
-                - name: MYSQL_PORT
-                  value: "3306"
-                volumeMounts:
+    - name: Deploy the service
+      k8s:
+        state: present
+        definition:
+          apiVersion: apps/v1
+          kind: StatefulSet
+          metadata:
+            name: donkeybot
+          spec:
+            serviceName: donkeybot
+            template:
+              metadata:
+                labels:
+                  app: donkeybot
+              spec:
+                containers:
+                  - image: "{{ image }}"
+                    name: donkeybot
+                    env:
+                      - name: MYSQL_HOST
+                        value: mysql
+                      - name: MYSQL_PORT
+                        value: "3306"
+                      - name: REDIS_HOST
+                        value: redis-master
+                      - name: REDIS_PORT
+                        value: "6379"
+                      - name: REDIS_PASSWORD
+                        value: "a8ElD0aWae"
+                    volumeMounts:
+                      - name: donkeybot-persistent-storage
+                        mountPath: /discordbase/img_cache
+                volumes:
                   - name: donkeybot-persistent-storage
-                    mountPath: /discordbase/img_cache
-              volumes:
-                - name: donkeybot-persistent-storage
-                  persistentVolumeClaim:
-                    claimName: nfs-discordbot-pvc
+                    persistentVolumeClaim:
+                      claimName: nfs-discordbot-pvc
 
-          selector:
-            matchLabels:
-              app: donkeybot
-      validate_certs: no
-      namespace: discordbots
+            selector:
+              matchLabels:
+                app: donkeybot
+        validate_certs: no
+        namespace: discordbots
