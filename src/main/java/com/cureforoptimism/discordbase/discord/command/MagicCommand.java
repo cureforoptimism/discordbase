@@ -1,7 +1,7 @@
 package com.cureforoptimism.discordbase.discord.command;
 
 import com.cureforoptimism.discordbase.application.DiscordBot;
-import com.cureforoptimism.discordbase.service.CoinGeckoService;
+import com.cureforoptimism.discordbase.service.MarketPriceMessageSubscriber;
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Message;
@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
 @Component
 public class MagicCommand implements DiscordCommand {
   private final DiscordBot discordBot;
-  private final CoinGeckoService coinGeckoService;
+  private final MarketPriceMessageSubscriber marketPriceMessageSubscriber;
 
   @Override
   public String getName() {
@@ -48,11 +48,7 @@ public class MagicCommand implements DiscordCommand {
                         + " ("
                         + String.format(
                             "`%.6f`",
-                            coinGeckoService
-                                .getCoinFullData()
-                                .getMarketData()
-                                .getCurrentPrice()
-                                .get("eth"))
+                            marketPriceMessageSubscriber.getLastMarketPlace().getPriceInEth())
                         + " ETH"
                         + ")"));
   }

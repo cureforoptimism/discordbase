@@ -24,7 +24,6 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import javax.imageio.ImageIO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,10 +34,10 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @RequiredArgsConstructor
 public class SalesService {
+  private final MarketPriceMessageSubscriber marketPriceMessageSubscriber;
   private final DonkRarityRankRepository donkRarityRankRepository;
   private final DonkListRepository donkListRepository;
   private final DonkSaleRepository donkSaleRepository;
-  private final CoinGeckoService coinGeckoService;
   private Date lastPostedBlockSalesTimestamp = null;
   private Date lastPostedBlockListingsTimestamp = null;
   private final DiscordBot discordBot;
@@ -83,11 +82,11 @@ public class SalesService {
         donkSaleRepository.findByBlockTimestampIsAfterAndPostedIsFalseOrderByBlockTimestampAsc(
             lastPostedBlockSalesTimestamp);
     if (!newSales.isEmpty()) {
-      final Optional<Double> ethMktPriceOpt = coinGeckoService.getEthPrice();
-      if (ethMktPriceOpt.isEmpty()) {
-        // This will retry once we have an ethereum price
+      if (marketPriceMessageSubscriber.getLastMarketPlace() == null) {
         return;
       }
+
+      final Double ethMktPrice = marketPriceMessageSubscriber.getLastMarketPlace().getEthPrice();
       final NumberFormat decimalFormatZeroes = new DecimalFormat("#,###.00");
       final NumberFormat decimalFormatOptionalZeroes = new DecimalFormat("0.###");
       Double currentPrice = discordBot.getCurrentPrice();
@@ -103,7 +102,7 @@ public class SalesService {
       for (DonkSale donkSale : newSales) {
         final BigDecimal usdPrice =
             donkSale.getSalePrice().multiply(BigDecimal.valueOf(currentPrice));
-        final Double ethPrice = usdPrice.doubleValue() / ethMktPriceOpt.get();
+        final Double ethPrice = usdPrice.doubleValue() / ethMktPrice;
         final String ethValue = decimalFormatOptionalZeroes.format(ethPrice);
         final String usdValue = decimalFormatZeroes.format(usdPrice);
 
@@ -211,11 +210,10 @@ public class SalesService {
         donkListRepository.findByBlockTimestampIsAfterAndPostedIsFalseOrderByBlockTimestampAsc(
             lastPostedBlockListingsTimestamp);
     if (!newListings.isEmpty()) {
-      final Optional<Double> ethMktPriceOpt = coinGeckoService.getEthPrice();
-      if (ethMktPriceOpt.isEmpty()) {
-        // This will retry once we have an ethereum price
+      if (marketPriceMessageSubscriber.getLastMarketPlace() == null) {
         return;
       }
+
       final NumberFormat decimalFormatZeroes = new DecimalFormat("#,###.00");
       final NumberFormat decimalFormatOptionalZeroes = new DecimalFormat("0.###");
       Double currentPrice = discordBot.getCurrentPrice();
@@ -229,9 +227,10 @@ public class SalesService {
       channelList.add(Constants.CHANNEL_TEST_GENERAL);
 
       for (DonkList donkListing : newListings) {
+        final Double ethMktPrice = marketPriceMessageSubscriber.getLastMarketPlace().getEthPrice();
         final BigDecimal usdPrice =
             donkListing.getSalePrice().multiply(BigDecimal.valueOf(currentPrice));
-        final Double ethPrice = usdPrice.doubleValue() / ethMktPriceOpt.get();
+        final Double ethPrice = usdPrice.doubleValue() / ethMktPrice;
         final String ethValue = decimalFormatOptionalZeroes.format(ethPrice);
         final String usdValue = decimalFormatZeroes.format(usdPrice);
 
