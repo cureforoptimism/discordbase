@@ -2,7 +2,13 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-#    show_sql: true
+  #    show_sql: true
+
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:""}
+
 
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
