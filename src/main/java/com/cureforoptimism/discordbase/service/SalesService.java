@@ -221,6 +221,7 @@ public class SalesService {
       List<Long> channelList = new ArrayList<>();
       if (System.getenv("PROD") != null) {
         channelList.add(Constants.CHANNEL_LIST_BOT);
+        channelList.add(Constants.CHANNEL_SALES_MILLIBOBS);
       }
 
       // Odd; additional channels don't get the image. Maybe need separate file uploads.
@@ -251,36 +252,41 @@ public class SalesService {
         }
 
         byte[] bytes = baos.toByteArray();
-        final MessageCreateSpec messageCreateSpec =
-            MessageCreateSpec.builder()
-                .addFile("tld_" + adjustedTokenId + ".png", new ByteArrayInputStream(bytes))
-                .addEmbed(
-                    EmbedCreateSpec.builder()
-                        .color(Color.BLUE)
-                        .title("LISTED")
-                        .url(
-                            "https://marketplace.treasure.lol/collection/the-lost-donkeys/"
-                                + donkListing.getTokenId())
-                        .description(
-                            "The Lost Donkeys #"
-                                + adjustedTokenId
-                                + " (Rarity Rank **#"
-                                + donkRarityRankRepository
-                                    .findByDonkId((long) adjustedTokenId)
-                                    .getRank()
-                                + "**)")
-                        .addField(
-                            "MAGIC",
-                            decimalFormatOptionalZeroes.format(donkListing.getSalePrice()),
-                            true)
-                        .addField("USD", "$" + usdValue, true)
-                        .addField("ETH", "Ξ" + ethValue, true)
-                        .image("attachment://tld_" + adjustedTokenId + ".png")
-                        .timestamp(donkListing.getBlockTimestamp().toInstant())
-                        .build())
-                .build();
 
-        discordBot.postMessage(messageCreateSpec, channelList);
+        for (Long channelId : channelList) {
+          final MessageCreateSpec messageCreateSpec =
+              MessageCreateSpec.builder()
+                  .addFile(
+                      "tld_" + adjustedTokenId + "_" + channelId + ".png",
+                      new ByteArrayInputStream(bytes))
+                  .addEmbed(
+                      EmbedCreateSpec.builder()
+                          .color(Color.BLUE)
+                          .title("LISTED")
+                          .url(
+                              "https://marketplace.treasure.lol/collection/the-lost-donkeys/"
+                                  + donkListing.getTokenId())
+                          .description(
+                              "The Lost Donkeys #"
+                                  + adjustedTokenId
+                                  + " (Rarity Rank **#"
+                                  + donkRarityRankRepository
+                                      .findByDonkId((long) adjustedTokenId)
+                                      .getRank()
+                                  + "**)")
+                          .addField(
+                              "MAGIC",
+                              decimalFormatOptionalZeroes.format(donkListing.getSalePrice()),
+                              true)
+                          .addField("USD", "$" + usdValue, true)
+                          .addField("ETH", "Ξ" + ethValue, true)
+                          .image("attachment://tld_" + adjustedTokenId + "_" + channelId + ".png")
+                          .timestamp(donkListing.getBlockTimestamp().toInstant())
+                          .build())
+                  .build();
+
+          discordBot.postMessage(messageCreateSpec, List.of(channelId));
+        }
 
         donkListing.setPosted(true);
         donkListRepository.save(donkListing);
