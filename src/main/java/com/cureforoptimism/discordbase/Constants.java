@@ -7,5 +7,5 @@ public class Constants {
   public static final long CHANNEL_TEST_GENERAL = 926303694801223751L;
   public static final long CHANNEL_SALES_MILLIBOBS = 991238774312947762L;
 
-  public static final long CHANNEL_SALES_BOT = -1L;
+  public static final long CHANNEL_SALES_BOT = 992074041370349588L;
 }

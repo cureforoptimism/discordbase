@@ -58,7 +58,7 @@ public class SalesService {
 
       List<Long> channelList = new ArrayList<>();
       if (System.getenv("PROD") != null) {
-        //        channelList.add(Constants.CHANNEL_SALES_BOT);
+        channelList.add(Constants.CHANNEL_SALES_BOT);
         channelList.add(Constants.CHANNEL_SALES_MILLIBOBS);
       }
 
