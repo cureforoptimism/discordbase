@@ -36,6 +36,7 @@ public class DiscordBot implements ApplicationRunner {
   static GatewayDiscordClient client;
   final TokenService tokenService;
 
+  @Getter Double currentEthPrice;
   @Getter Double currentPrice;
   @Getter Double currentChange;
   @Getter Double currentChange12h;
@@ -52,6 +53,7 @@ public class DiscordBot implements ApplicationRunner {
   }
 
   public void refreshMagicPrice(
+      Double currentEthPrice,
       Double price,
       Double usd24HChange,
       Double change12h,
@@ -61,6 +63,7 @@ public class DiscordBot implements ApplicationRunner {
       Double volume12h,
       Double volume4h,
       Double volume1h) {
+    this.currentEthPrice = currentEthPrice;
     currentPrice = price;
     currentChange = usd24HChange;
     currentChange12h = change12h;
@@ -103,8 +106,8 @@ public class DiscordBot implements ApplicationRunner {
         .on(RefreshEvent.class)
         .subscribe(
             event -> {
-              String nickName = ("MAGIC $" + currentPrice);
-              String presence = String.format("24h: %.2f%%", currentChange);
+              String nickName = ("ETH $" + currentEthPrice);
+              String presence = String.format("MAGIC: $%.3f", currentPrice);
               client.getGuilds().toStream().forEach(g -> g.changeSelfNickname(nickName).block());
               client
                   .updatePresence(ClientPresence.online(ClientActivity.watching(presence)))
