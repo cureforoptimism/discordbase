@@ -1,30 +1,36 @@
 - hosts: localhost
   tasks:
-  - name: Deploy the service
-    k8s:
-      state: present
-      definition: 
-        apiVersion: apps/v1
-        kind: StatefulSet
-        metadata:
-          name: obitsbot
-        spec:
-          serviceName: obitsbot
-          template:
-            metadata:
-              labels:
+    - name: Deploy the service
+      k8s:
+        state: present
+        definition:
+          apiVersion: apps/v1
+          kind: StatefulSet
+          metadata:
+            name: obitsbot
+          spec:
+            serviceName: obitsbot
+            template:
+              metadata:
+                labels:
+                  app: obitsbot
+              spec:
+                containers:
+                  - image: "{{ image }}"
+                    name: obitsbot
+                    env:
+                      - name: MYSQL_HOST
+                        value: mysql
+                      - name: MYSQL_PORT
+                        value: "3306"
+                      - name: REDIS_HOST
+                        value: redis-master
+                      - name: REDIS_PORT
+                        value: "6379"
+                      - name: REDIS_PASSWORD
+                        value: "a8ElD0aWae"
+            selector:
+              matchLabels:
                 app: obitsbot
-            spec:
-              containers:
-              - image: "{{ image }}"
-                name: obitsbot
-                env:
-                - name: MYSQL_HOST
-                  value: mysql
-                - name: MYSQL_PORT
-                  value: "3306"
-          selector:
-            matchLabels:
-              app: obitsbot
-      validate_certs: no
-      namespace: discordbots
+        validate_certs: no
+        namespace: discordbots
