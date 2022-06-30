@@ -29,6 +29,8 @@
                         value: "6379"
                       - name: REDIS_PASSWORD
                         value: "a8ElD0aWae"
+                      - name: PROD
+                        value: "true"
                     volumeMounts:
                       - name: smolage-persistent-storage
                         mountPath: /discordbase/img_cache
