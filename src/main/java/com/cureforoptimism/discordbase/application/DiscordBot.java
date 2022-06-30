@@ -4,17 +4,21 @@ import com.cureforoptimism.discordbase.discord.event.RefreshEvent;
 import com.cureforoptimism.discordbase.discord.listener.DiscordCommandListener;
 import com.cureforoptimism.discordbase.service.TokenService;
 import discord4j.common.JacksonResources;
+import discord4j.common.util.Snowflake;
 import discord4j.core.DiscordClientBuilder;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
+import discord4j.core.object.entity.channel.MessageChannel;
 import discord4j.core.object.presence.ClientActivity;
 import discord4j.core.object.presence.ClientPresence;
+import discord4j.core.spec.MessageCreateSpec;
 import discord4j.discordjson.json.ApplicationCommandData;
 import discord4j.discordjson.json.ApplicationCommandRequest;
 import discord4j.rest.service.ApplicationService;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -189,5 +193,21 @@ public class DiscordBot implements ApplicationRunner {
 
     // Check and return if options have changed.
     return !discordCommand.options().equals(command.options());
+  }
+
+  public void postMessage(MessageCreateSpec messageCreateSpec, List<Long> discordChannelIds) {
+    for (Long discordChannelId : discordChannelIds) {
+      try {
+        final var messages =
+            client
+                .getChannelById(Snowflake.of(discordChannelId))
+                .ofType(MessageChannel.class)
+                .flatMap(c -> c.createMessage(messageCreateSpec));
+
+        messages.block();
+      } catch (Exception ex) {
+        log.warn("Unable to post to channel: " + discordChannelId, ex);
+      }
+    }
   }
 }

@@ -29,6 +29,10 @@
                         value: "6379"
                       - name: REDIS_PASSWORD
                         value: "a8ElD0aWae"
+              volumes:
+                - name: smolage-persistent-storage
+                  persistentVolumeClaim:
+                    claimName: nfs-discordbot-pvc
             selector:
               matchLabels:
                 app: obitsbot
