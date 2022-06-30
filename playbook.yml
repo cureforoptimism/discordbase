@@ -30,7 +30,7 @@
                       - name: REDIS_PASSWORD
                         value: "a8ElD0aWae"
                     volumeMounts:
-                      - name: birdsbladesbot-persistent-storage
+                      - name: smolage-persistent-storage
                         mountPath: /discordbase/img_cache
               volumes:
                 - name: smolage-persistent-storage
