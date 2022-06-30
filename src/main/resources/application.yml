@@ -2,11 +2,16 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-#    show_sql: true
+  #    show_sql: true
+
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:""}
 
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3307}/obitsbot?createDatabaseIfNotExist=true
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/obitsbot?createDatabaseIfNotExist=true
     username: root
     password: password
     hikari:
