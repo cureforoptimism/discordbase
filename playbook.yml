@@ -32,10 +32,10 @@
                     volumeMounts:
                       - name: smolage-persistent-storage
                         mountPath: /discordbase/img_cache
-              volumes:
-                - name: smolage-persistent-storage
-                  persistentVolumeClaim:
-                    claimName: nfs-discordbot-pvc
+                volumes:
+                  - name: smolage-persistent-storage
+                    persistentVolumeClaim:
+                      claimName: nfs-discordbot-pvc
             selector:
               matchLabels:
                 app: obitsbot
