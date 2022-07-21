@@ -10,6 +10,7 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
+import java.net.http.HttpClient.Redirect;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
@@ -105,10 +106,11 @@ public class NftImageService {
 
     final var smolAge = smolAgeOpt.get();
     final var suffix =
-        Optional.ofNullable(smolAge.getImage())
-            .filter(f -> f.contains("."))
-            .map(f -> f.substring(smolAge.getImage().lastIndexOf(".") + 1))
-            .orElse(".gif");
+        "."
+            + Optional.ofNullable(smolAge.getImage())
+                .filter(f -> f.contains("."))
+                .map(f -> f.substring(smolAge.getImage().lastIndexOf(".") + 1))
+                .orElse("gif");
 
     final Path path = Paths.get("img_cache/smolage/", tokenId + suffix);
     if (path.toFile().exists()) {
@@ -129,7 +131,7 @@ public class NftImageService {
       String ipfsImage =
           smolAge.getImage().replace("ipfs://", "https://gateway.pinata.cloud/ipfs/");
 
-      HttpClient httpClient = HttpClient.newHttpClient();
+      HttpClient httpClient = HttpClient.newBuilder().followRedirects(Redirect.ALWAYS).build();
       HttpRequest request = HttpRequest.newBuilder().GET().uri(new URI(ipfsImage)).build();
 
       final var response = httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray());
