@@ -11,10 +11,6 @@ import com.cureforoptimism.discordbase.repository.DonkSaleRepository;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.core.spec.MessageCreateSpec;
 import discord4j.rest.util.Color;
-import io.github.redouane59.twitter.TwitterClient;
-import io.github.redouane59.twitter.dto.tweet.MediaCategory;
-import io.github.redouane59.twitter.dto.tweet.TweetParameters;
-import io.github.redouane59.twitter.dto.tweet.TweetParameters.Media;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -43,7 +39,7 @@ public class SalesService {
   private final DiscordBot discordBot;
   private final Utilities utilities;
 
-  private final TwitterClient twitterClient;
+//  private final TwitterClient twitterClient;
 
   @Scheduled(fixedDelay = 30000, initialDelay = 10000)
   public synchronized void postNewMarketplaceActivities() {
@@ -126,32 +122,32 @@ public class SalesService {
             donkRarityRankRepository.findByDonkId((long) adjustedTokenId).getRank();
 
         byte[] bytes = baos.toByteArray();
-        final var mediaResponse =
-            twitterClient.uploadMedia(
-                donkSale.getTokenId() + "_tld.png", bytes, MediaCategory.TWEET_IMAGE);
-        final var media = Media.builder().mediaIds(List.of(mediaResponse.getMediaId())).build();
-        TweetParameters tweetParameters =
-            TweetParameters.builder()
-                .media(media)
-                .text(
-                    "The Lost Donkeys #"
-                        + adjustedTokenId
-                        + " (Rarity Rank #"
-                        + rarityRank
-                        + ")\nSold for\nMAGIC: "
-                        + decimalFormatOptionalZeroes.format(donkSale.getSalePrice())
-                        + "\nUSD: $"
-                        + usdValue
-                        + "\nETH: "
-                        + ethValue
-                        + "\n\n"
-                        + "https://marketplace.treasure.lol/collection/the-lost-donkeys/"
-                        + donkSale.getTokenId()
-                        + "\n\n"
-                        + "#thelostdonkeys #treasuredao")
-                .build();
-
-        twitterClient.postTweet(tweetParameters);
+//        final var mediaResponse =
+//            twitterClient.uploadMedia(
+//                donkSale.getTokenId() + "_tld.png", bytes, MediaCategory.TWEET_IMAGE);
+//        final var media = Media.builder().mediaIds(List.of(mediaResponse.getMediaId())).build();
+//        TweetParameters tweetParameters =
+//            TweetParameters.builder()
+//                .media(media)
+//                .text(
+//                    "The Lost Donkeys #"
+//                        + adjustedTokenId
+//                        + " (Rarity Rank #"
+//                        + rarityRank
+//                        + ")\nSold for\nMAGIC: "
+//                        + decimalFormatOptionalZeroes.format(donkSale.getSalePrice())
+//                        + "\nUSD: $"
+//                        + usdValue
+//                        + "\nETH: "
+//                        + ethValue
+//                        + "\n\n"
+//                        + "https://marketplace.treasure.lol/collection/the-lost-donkeys/"
+//                        + donkSale.getTokenId()
+//                        + "\n\n"
+//                        + "#thelostdonkeys #treasuredao")
+//                .build();
+//
+//        twitterClient.postTweet(tweetParameters);
 
         final MessageCreateSpec messageCreateSpec =
             MessageCreateSpec.builder()
