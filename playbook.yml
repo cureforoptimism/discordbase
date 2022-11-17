@@ -20,7 +20,7 @@
                     name: donkeybot
                     env:
                       - name: MYSQL_HOST
-                        value: mysql
+                        value: mariadb
                       - name: MYSQL_PORT
                         value: "3306"
                       - name: REDIS_HOST
